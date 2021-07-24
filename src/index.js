@@ -1,5 +1,3 @@
-import "babel-polyfill";
-
 const num1 = 100;
 
 export const func1 = () => {};
@@ -17,6 +15,12 @@ export class Person {
     return this.name;
   }
 }
+
+const p = Promise.resolve();
+
+p.then(() => {
+  console.log('Promise')
+})
 
 const person = new Person('zjj');
 person.sayName();

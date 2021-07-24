@@ -354,4 +354,125 @@ console.log('[DEBUG]: ', isOk, num1);
 - 引入了 polyfill
 - preset-env 配置了 useBuiltIns 对 polyfill 自动处理
 - 最终将所有的 polyfill 均引入了
+- polyfill 未做按需引入处理，但是好在还是根据 targets 的配置做了一层过滤的
+
+### 阶段三：
+
+```sh
+npm install --save babel-runtime
+npm install --save-dev babel-plugin-transform-runtime
+```
+
+```js
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "chrome": 40,
+        "safari": 6,
+        "ie": 10
+      },
+      "debug": true,
+      "useBuiltIns": false // 必须禁用
+    }]
+  ],
+  "plugins": ["transform-runtime"]
+}
+```
+
+源码
+
+```js
+const num1 = 100;
+
+export const func1 = () => {};
+
+const arr = [1, 2, 3, 4];
+
+const isOk = arr.includes(2);
+
+export class Person {
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayName() {
+    return this.name;
+  }
+}
+
+const p = Promise.resolve();
+
+p.then(() => {
+  console.log('Promise')
+})
+
+const person = new Person('zjj');
+person.sayName();
+
+console.log('[DEBUG]: ', isOk, num1);
+
+```
+输出 Out:
+```js
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Person = exports.func1 = undefined;
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var num1 = 100;
+
+var func1 = exports.func1 = function func1() {};
+
+var arr = [1, 2, 3, 4];
+
+var isOk = arr.includes(2);
+
+var Person = exports.Person = function () {
+  function Person(name) {
+    (0, _classCallCheck3.default)(this, Person);
+
+    this.name = name;
+  }
+
+  (0, _createClass3.default)(Person, [{
+    key: 'sayName',
+    value: function sayName() {
+      return this.name;
+    }
+  }]);
+  return Person;
+}();
+
+var p = _promise2.default.resolve();
+
+p.then(function () {
+  console.log('Promise');
+});
+
+var person = new Person('zjj');
+person.sayName();
+
+console.log('[DEBUG]: ', isOk, num1);
+```
+
+> 结论：
+- 最终我们实现了按需引入。
+- 而且未污染全局环境。
 
