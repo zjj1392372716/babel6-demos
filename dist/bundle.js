@@ -25,7 +25,7 @@ var func1 = exports.func1 = function func1() {};
 
 var arr = [1, 2, 3, 4];
 
-var isOk = arr.includes(2);
+var isOk = arr.indexOf(2) !== -1;
 
 var Person = exports.Person = function () {
   function Person(name) {

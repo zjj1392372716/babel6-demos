@@ -10,5 +10,5 @@
       "useBuiltIns": false
     }]
   ],
-  "plugins": ["transform-runtime"]
+  "plugins": ["transform-runtime", "babel-plugin-array-includes"]
 }
